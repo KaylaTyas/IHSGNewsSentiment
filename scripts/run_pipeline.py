@@ -3,7 +3,7 @@ import subprocess, sys, time
 PY = sys.executable
 STEPS = [
     ("scrape", f"{PY} scripts/scrape_news.py"),
-    ("process", f"{PY} scripts/process_news_batch.py"),
+    ("process", f"{PY} scripts/process_news.py"),
     ("combine", f"{PY} scripts/combine_features.py"),
     ("predict", f"{PY} scripts/predict_ihsg.py"),
 ]
