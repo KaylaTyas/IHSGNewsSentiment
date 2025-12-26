@@ -1,0 +1,15 @@
+__pycache__/
+*.pyc
+*.pyo
+
+.env
+venv/
+.env/
+
+*.csv
+*.xlsx
+
+*.pkl
+*.joblib
+
+.ipynb_checkpoints/
