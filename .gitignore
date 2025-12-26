@@ -9,4 +9,7 @@ venv/
 *.csv
 *.xlsx
 
+*.pkl
+*.joblib
+
 .ipynb_checkpoints/
