@@ -282,6 +282,14 @@ with tab2:
     df_weekly = load_weekly_data()
     df_today = load_today_ihsg()
     
+    # disclaimer
+    st.warning("""
+    ⚠️ **Disclaimer**: Prediksi ini hanya untuk keperluan informasi dan analisis. 
+    Bukan merupakan rekomendasi investasi. Keputusan investasi menjadi 
+    tanggung jawab masing-masing investor. Pastikan untuk melakukan riset 
+    dan konsultasi dengan ahli sebelum mengambil keputusan investasi.
+    """)
+
     # Title
     st.markdown("<h1 style='text-align: center;'>IHSG Prediction based on news sentiment</h1>", unsafe_allow_html=True)
     col1, col2 = st.columns(2)
