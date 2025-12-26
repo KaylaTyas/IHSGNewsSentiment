@@ -187,11 +187,19 @@ tab1, tab2 = st.tabs(["🏠 Home", "📊 Dashboard"])
 
 # TAB 1: HOME
 with tab1:
-    st.title("📰 IHSG Prediction System")
-    st.markdown("### Prediksi Harga IHSG Menggunakan Analisis Sentimen Berita")
+    st.title("📰 IHSG Prediction Based on Sentiment News")
+    st.markdown("### Prediksi Harga IHSG Berdasarkan Analisis Sentimen Berita Ekonomi")
     
     st.markdown("---")
     
+    # Disclaimer
+    st.warning("""
+    ⚠️ **Disclaimer**: Prediksi ini hanya untuk keperluan informasi dan analisis. 
+    Bukan merupakan rekomendasi investasi. Keputusan investasi menjadi 
+    tanggung jawab masing-masing investor. Pastikan untuk melakukan riset 
+    dan konsultasi dengan ahli sebelum mengambil keputusan investasi.
+    """)
+
     # About Section
     st.markdown("""
     ## 🎯 Tentang Aplikasi
@@ -230,7 +238,7 @@ with tab1:
     ### Sentimen Berita
     
     Sentimen diklasifikasikan menggunakan model **IndoBERT** yang sudah di-fine-tune 
-    untuk bahasa Indonesia, dengan keyword override untuk istilah finansial spesifik.
+    untuk bahasa Indonesia, dengan keyword yang telah disesuaikan dengan istilah finansial spesifik.
     """)
     st.markdown("---")
     
@@ -246,25 +254,23 @@ with tab1:
     ### Chart
     - **Line Solid** - Data aktual IHSG (6 hari terakhir)
     - **Line Continues** - Prediksi untuk besok (sambungan dari data aktual)
-    - **Warna Merah** - Actual data
-    - **Warna Cyan** - Prediction (titik terakhir)
+    - **Warna Pink** - Actual data
+    - **Warna Biru** - Prediction (titik terakhir)
     
     ### Tips Penggunaan
     
-    1. Lihat **Average Sentiment** untuk gauge sentimen pasar secara keseluruhan
+    1. Lihat **Rata-rata sentiment** sebagai alat ukur untuk kondisi pasar secara umum
     2. Perhatikan **distribusi sentimen** - apakah mayoritas positif/negatif?
     3. Cek **grafik tren** untuk melihat momentum pergerakan
     4. Gunakan prediksi sebagai **salah satu referensi**, bukan satu-satunya dasar keputusan
-    """)
-    st.markdown("---")
-    
-    # Disclaimer
+    """)# Disclaimer
     st.warning("""
     ⚠️ **Disclaimer**: Prediksi ini hanya untuk keperluan informasi dan analisis. 
     Bukan merupakan rekomendasi investasi. Keputusan investasi menjadi 
     tanggung jawab masing-masing investor. Pastikan untuk melakukan riset 
     dan konsultasi dengan ahli sebelum mengambil keputusan investasi.
     """)
+    st.markdown("---")
     
     st.info("💡 **Ready?** Klik tab **Dashboard** untuk melihat prediksi hari ini!")
 
