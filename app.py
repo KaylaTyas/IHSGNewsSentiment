@@ -263,12 +263,6 @@ with tab1:
     2. Perhatikan **distribusi sentimen** - apakah mayoritas positif/negatif?
     3. Cek **grafik tren** untuk melihat momentum pergerakan
     4. Gunakan prediksi sebagai **salah satu referensi**, bukan satu-satunya dasar keputusan
-    """)# Disclaimer
-    st.warning("""
-    ⚠️ **Disclaimer**: Prediksi ini hanya untuk keperluan informasi dan analisis. 
-    Bukan merupakan rekomendasi investasi. Keputusan investasi menjadi 
-    tanggung jawab masing-masing investor. Pastikan untuk melakukan riset 
-    dan konsultasi dengan ahli sebelum mengambil keputusan investasi.
     """)
     st.markdown("---")
     
