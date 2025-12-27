@@ -1,7 +1,7 @@
 name: Daily pipeline (09:00 WIB)
 on:
   schedule:
-    - cron: '0 2 * * *'  # 02:00 UTC = 09:00 WIB
+    - cron: '0 2,4 * * *'
   workflow_dispatch:
 
 jobs:
@@ -25,6 +25,6 @@ jobs:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
           DB_URL: ${{ secrets.DB_URL }}
-          MODEL_PATH: ./models/best_sarimax_model.pkl
+          MODEL_PATH: ./models/best_sarimax_model.joblib
         run: |
           python scripts/run_pipeline.py
