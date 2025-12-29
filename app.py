@@ -182,6 +182,19 @@ def load_today_ihsg():
     df['close'] = pd.to_numeric(df['close'], errors='coerce')
     return df
 
+st.markdown("""
+    <style>
+    .target {
+        display: block;
+        position: relative;
+        top: -100px;
+        visibility: hidden;
+    }
+    </style>
+    """, unsafe_allow_html=True)
+
+st.markdown('<a class="target" id="top_tabs"></a>', unsafe_allow_html=True)
+
 # TABS
 tab1, tab2 = st.tabs(["🏠 Home", "📊 Dashboard"])
 
@@ -266,7 +279,7 @@ with tab1:
     """)
     st.markdown("---")
     
-    st.info("💡 **Ready?** Klik tab **Dashboard** untuk melihat prediksi hari ini!")
+    st.info('💡 **Ready?** Klik [**Dashboard**](#top_tabs) untuk melihat prediksi hari ini!')
 
 # TAB 2: DASHBOARD
 with tab2:
@@ -415,7 +428,7 @@ with tab2:
     # RIGHT: SENTIMENT + NEWS
     with col_right:
         # Sentiment
-        st.subheader("📌 Ringkasan Sentimen Berita Ekonomi Hari Ini")
+        st.subheader("📌 Ringkasan Sentimen Harian")
         
         if not df_news.empty:
             df_news['sentiment_label'] = df_news['sentiment_label'].str.lower()
