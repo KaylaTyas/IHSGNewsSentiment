@@ -415,7 +415,7 @@ with tab2:
     # RIGHT: SENTIMENT + NEWS
     with col_right:
         # Sentiment
-        st.subheader("📌 Ringkasan Hari Ini")
+        st.subheader("📌 Ringkasan Sentimen Berita Ekonomi Hari Ini")
         
         if not df_news.empty:
             df_news['sentiment_label'] = df_news['sentiment_label'].str.lower()
