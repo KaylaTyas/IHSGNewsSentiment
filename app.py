@@ -247,9 +247,9 @@ with tab1:
     ## 👀 Cara Membaca Dashboard
     
     ### Sentiment Score
-    - 🟢 **Positif** - Berita optimis, indikasi bullish (harga cenderung naik)
+    - 🟢 **Positif** - Berita optimis, indikasi bullish (harga IHSG cenderung naik)
     - 🟡 **Netral** - Berita seimbang, tidak ada sinyal jelas
-    - 🔴 **Negatif** - Berita pesimis, indikasi bearish (harga cenderung turun)
+    - 🔴 **Negatif** - Berita pesimis, indikasi bearish (harga IHSG cenderung turun)
     
     ### Chart
     - **Line Solid** - Data aktual IHSG (6 hari terakhir)
