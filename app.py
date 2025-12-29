@@ -200,7 +200,7 @@ tab1, tab2 = st.tabs(["🏠 Home", "📊 Dashboard"])
 
 # TAB 1: HOME
 with tab1:
-    st.title("📰 IHSG Prediction Based on Sentiment News")
+    st.title("📰 IHSG Prediction Based on Sentimen News")
     st.markdown("### Prediksi Harga IHSG Berdasarkan Analisis Sentimen Berita Ekonomi")
     
     st.markdown("---")
@@ -259,7 +259,7 @@ with tab1:
     st.markdown("""
     ## 👀 Cara Membaca Dashboard
     
-    ### Sentiment Score
+    ### Skor Sentimen
     - 🟢 **Positif** - Berita optimis, indikasi bullish (harga IHSG cenderung naik)
     - 🟡 **Netral** - Berita seimbang, tidak ada sinyal jelas
     - 🔴 **Negatif** - Berita pesimis, indikasi bearish (harga IHSG cenderung turun)
@@ -272,7 +272,7 @@ with tab1:
     
     ### Tips Penggunaan
     
-    1. Lihat **Rata-rata sentiment** sebagai alat ukur untuk kondisi pasar secara umum
+    1. Lihat **Rata-rata sentimen** sebagai alat ukur untuk kondisi pasar secara umum
     2. Perhatikan **distribusi sentimen** - apakah mayoritas positif/negatif?
     3. Cek **grafik tren** untuk melihat momentum pergerakan
     4. Gunakan prediksi sebagai **salah satu referensi**, bukan satu-satunya dasar keputusan
@@ -298,7 +298,7 @@ with tab2:
     """)
 
     # Title
-    st.markdown("<h1 style='text-align: center;'>IHSG Prediction based on news sentiment</h1>", unsafe_allow_html=True)
+    st.markdown("<h1 style='text-align: center;'>IHSG Prediction based on news sentimen</h1>", unsafe_allow_html=True)
     col1, col2 = st.columns(2)
     
     val_today = df_today.iloc[0]['close'] if not df_today.empty else None
@@ -436,7 +436,7 @@ with tab2:
             avg_sent = df_news["sentiment_score"].mean()
             dist = df_news["sentiment_label"].value_counts(normalize=True) * 100
             
-            st.metric("Average Sentiment", f"{avg_sent:.3f}")
+            st.metric("Average Sentimen", f"{avg_sent:.3f}")
             
             col_s1, col_s2, col_s3 = st.columns(3)
             with col_s1:
