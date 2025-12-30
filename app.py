@@ -200,7 +200,7 @@ tab1, tab2 = st.tabs(["🏠 Home", "📊 Dashboard"])
 
 # TAB 1: HOME
 with tab1:
-    st.title("📰 IHSG Prediction Based on Sentimen News")
+    st.markdown("<h1 style='text-align: center;'>IHSG Prediction based on news sentimen</h1>")
     st.markdown("### Prediksi Harga IHSG Berdasarkan Analisis Sentimen Berita Ekonomi")
     
     st.markdown("---")
@@ -218,9 +218,9 @@ with tab1:
     ## 🎯 Tentang Aplikasi
         
     Aplikasi ini memprediksi pergerakan **Indeks Harga Saham Gabungan (IHSG)** dengan menggabungkan:
-    - 🗞️ **Analisis Sentimen Berita** - Menganalisis berita ekonomi dan pasar saham
-    - 🗂️ **Data Historis IHSG** - Pola pergerakan harga saham
-    - ⚙️ **Machine Learning** - Model SARIMAX untuk prediksi akurat
+    - **Analisis Sentimen Berita** - Menganalisis berita ekonomi dan pasar saham
+    - **Data Historis IHSG** - Pola pergerakan harga saham
+    - **Machine Learning** - Model SARIMAX untuk prediksi akurat
         
     ### ✨ Fitur Utama
         
@@ -257,7 +257,7 @@ with tab1:
     
     # How to Read
     st.markdown("""
-    ## 👀 Cara Membaca Dashboard
+    ## Cara Membaca Dashboard
     
     ### Skor Sentimen
     - 🟢 **Positif** - Berita optimis, indikasi bullish (harga IHSG cenderung naik)
