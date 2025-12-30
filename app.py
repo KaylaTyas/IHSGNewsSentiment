@@ -200,7 +200,7 @@ tab1, tab2 = st.tabs(["🏠 Home", "📊 Dashboard"])
 
 # TAB 1: HOME
 with tab1:
-    st.markdown("<h1 style='text-align: center;'>IHSG Prediction based on news sentimen</h1>")
+    st.markdown("<h1 style='text-align: center;'>IHSG Prediction based on news sentimen</h1>", unsafe_allow_html=True)
     st.markdown("### Prediksi Harga IHSG Berdasarkan Analisis Sentimen Berita Ekonomi")
     
     st.markdown("---")
