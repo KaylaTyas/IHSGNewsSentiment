@@ -213,6 +213,30 @@ with tab1:
     dan konsultasi dengan ahli sebelum mengambil keputusan investasi.
     """)
 
+    st.markdown("---")
+    st.markdown("### Istilah Dasar")
+    
+    col_term1, col_term2 = st.columns(2)
+    
+    with col_term1:
+        with st.expander("Apa itu IHSG?", expanded=True):
+            st.markdown("""
+            **IHSG (Indeks Harga Saham Gabungan)** adalah barometer utama pasar modal di Indonesia. 
+            
+            Gampangnya, IHSG itu seperti **'rata-rata rapor'** dari seluruh perusahaan yang melantai di Bursa Efek Indonesia (BEI). 
+            - Jika IHSG **Naik**: Mayoritas harga saham di Indonesia sedang menguat.
+            - Jika IHSG **Turun**: Mayoritas harga saham sedang melemah.""")
+            
+    with col_term2:
+        with st.expander("Apa itu Sentimen?", expanded=True):
+            st.markdown("""
+            **Sentimen Pasar** adalah refleksi dari emosi dan opini para pelaku pasar terhadap kondisi ekonomi. 
+            
+            Aplikasi ini menggunakan **model IndoBERT** untuk membaca ribuan kata dari berita dan menyimpulkannya:
+            - **Positif:** Pasar percaya diri, biasanya harga ikut naik.
+            - **Netral:** Berita bersifat informatif rutin atau efek positif dan negatif saling meredam. Pasar cenderung **"Wait and See"** (menunggu momentum).
+            - **Negatif:** Pasar takut, biasanya harga cenderung turun.""")
+
     # About Section
     st.markdown("""
     ## 🎯 Tentang Aplikasi
@@ -222,7 +246,7 @@ with tab1:
     - **Data Historis IHSG** - Pola pergerakan harga saham
     - **Machine Learning** - Model SARIMAX untuk prediksi akurat
         
-    ### ✨ Fitur Utama
+    ### Fitur Utama
         
     1. **Prediksi Harian** - Prediksi harga penutupan IHSG besok
     2. **Sentimen Real-time** - Analisis sentimen dari berita terkini
@@ -233,7 +257,7 @@ with tab1:
     
     # Methodology Section
     st.markdown("""
-    ## 🔬 Metodologi
+    ## Metodologi
     
     ### Model SARIMAX
     
