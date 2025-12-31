@@ -200,7 +200,7 @@ tab1, tab2 = st.tabs(["🏠 Home", "📊 Dashboard"])
 
 # TAB 1: HOME
 with tab1:
-    st.markdown("<h1 style='text-align: center;'>IHSG Prediction based on news sentiment</h1>", unsafe_allow_html=True)
+    st.markdown("<h1 style='text-align: center;'>IHSG Prediction Based on News Sentiment</h1>", unsafe_allow_html=True)
     st.markdown("## Prediksi Harga IHSG Berdasarkan Analisis Sentimen Berita Ekonomi")
     
     st.markdown("---")
@@ -239,7 +239,7 @@ with tab1:
 
     # About Section
     st.markdown("""
-    ## 🎯 Tentang Aplikasi
+    ## 🎯 Tentang Website
         
     Aplikasi ini memprediksi pergerakan **Indeks Harga Saham Gabungan (IHSG)** dengan menggabungkan:
     - **Analisis Sentimen Berita** - Menganalisis berita ekonomi dan pasar saham
@@ -322,7 +322,7 @@ with tab2:
     """)
 
     # Title
-    st.markdown("<h1 style='text-align: center;'>IHSG Prediction based on news sentiment</h1>", unsafe_allow_html=True)
+    st.markdown("<h1 style='text-align: center;'>IHSG Prediction Based on News Sentiment</h1>", unsafe_allow_html=True)
     col1, col2 = st.columns(2)
     
     val_today = df_today.iloc[0]['close'] if not df_today.empty else None
