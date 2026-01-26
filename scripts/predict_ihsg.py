@@ -45,40 +45,46 @@ df['ma5'] = df['Terakhir'].rolling(5).mean().shift(1)
 df['ma10'] = df['Terakhir'].rolling(10).mean().shift(1)
 df['volatility5'] = df['return'].rolling(5).std().shift(1)
 
+df['target'] = df['Terakhir'].shift(-1)
+
 # Load model
 print("Loading model...")
-model = joblib.load("models/best_sarimax_model.joblib")
+model = joblib.load("models/best_sarimax_model (2).joblib")
 
 # Recreate scalers
 print("Fitting scalers on training period...")
-feature_cols = ['Pembukaan', 'Tertinggi', 'Terendah', 'Vol.', 'avg_sentiment',
+feature_cols = ['Pembukaan', 'Tertinggi', 'Terendah', 'Vol.', 'avg_sentiment', 'prop_pos',
                 'prop_neg', 'return', 'lag1_return', 'ma5', 'ma10', 'volatility5']
-target_col = ['Terakhir']
 
 train = df[(df['tanggal'] >= "2022-01-03") & (df['tanggal'] <= "2022-12-31")].copy()
 if len(train) == 0:
     print("Warning: Training period not found, using earliest 50% of data")
     train = df.iloc[:int(len(df)*0.5)].copy()
 
+train_clean = train[feature_cols + ['target']].dropna()
+
 scaler_features = StandardScaler()
 scaler_target = StandardScaler()
-scaler_features.fit(train[feature_cols].dropna())
-scaler_target.fit(train[target_col].dropna())
-print(f"Scalers fitted on {len(train)} training samples\n")
+scaler_features.fit(train_clean[feature_cols])
+scaler_target.fit(train_clean[['target']])
+print(f"Scalers fitted on {len(train_clean)} training samples\n")
 
 # History predict
 print("Generating historical predictions...")
-df_historical = df[:-1].copy()
-df_historical_clean = df_historical.dropna(subset=feature_cols).copy()
+df_historical = df.dropna(subset=feature_cols + ['target']).copy()
 
-df_scaled = pd.DataFrame(
-    scaler_features.transform(df_historical_clean[feature_cols]),
+x_scaled = pd.DataFrame(
+    scaler_features.transform(df_historical[feature_cols]),
     columns=feature_cols,
-    index=df_historical_clean.index
+    index=df_historical.index
 )
-df_scaled['Terakhir_scaled'] = scaler_target.transform(df_historical_clean[target_col])
-df_scaled['tanggal'] = df_historical_clean['tanggal'].values
-df_scaled['Terakhir_actual'] = df_historical_clean['Terakhir'].values
+y_scaled = scaler_target.transform(df_historical[['target']])
+
+df_scaled = x_scaled.copy()
+df_scaled['target_scaled'] = y_scaled
+df_scaled['tanggal'] = df_historical['tanggal'].values
+df_scaled['Terakhir_actual'] = df_historical['Terakhir'].values
+df_scaled['target_actual'] = df_historical['target'].values
 
 try:
     WINDOW = min(int(model.nobs), len(df_scaled))
@@ -94,17 +100,17 @@ try:
     ).flatten()
     
     df_pred['predicted_close'] = predictions_actual
-    df_pred['actual_yesterday'] = df_pred['Terakhir_actual'].shift(1)
-    df_pred['predicted_pct'] = ((df_pred['predicted_close'] - df_pred['actual_yesterday']) / 
-                                 df_pred['actual_yesterday'] * 100)
+    df_pred['actual_today'] = df_pred['Terakhir_actual'].shift(1)
+    df_pred['predicted_pct'] = ((df_pred['predicted_close'] - df_pred['actual_today']) / 
+                                 df_pred['actual_today'] * 100)
     
     print(f"Generated {len(df_pred)} historical predictions")
     print("\nLast 5 historical predictions:")
     for idx in df_pred.tail(5).index:
         row = df_pred.loc[idx]
         pct = row['predicted_pct'] if not pd.isna(row['predicted_pct']) else 0
-        print(f"  {row['tanggal'].date()} | Actual: {row['Terakhir_actual']:.2f} | "
-              f"Predicted: {row['predicted_close']:.2f} | Change: {pct:+.2f}%")
+        print(f"{str(row['tanggal'].date()):<12} {row['actual_today']:<12.2f} "
+              f"{row['predicted_close']:<15.2f} {pct:+.2f}%")
 except Exception as e:
     print(f"Error in historical predictions: {e}")
     raise
@@ -146,12 +152,24 @@ print(f"Predicting: {tomorrow_date.date()}")
 
 # Tomorrow's features
 df_tomorrow = df_today.copy()
+
+missing_features = []
 for col in feature_cols:
-    if pd.isna(df_tomorrow[col].iloc[0]):
-        if col in df_today.columns and not pd.isna(df_today[col].iloc[0]):
-            df_tomorrow[col] = df_today[col].iloc[0]
-        else:
-            df_tomorrow[col] = df[col].tail(5).mean()
+    if col not in df_tomorrow.columns or pd.isna(df_tomorrow[col].iloc[0]):
+        missing_features.append(col)
+        # Use 5-day mean as fallback
+        df_tomorrow[col] = df[col].tail(5).mean()
+
+if missing_features:
+    print(f"Filled {len(missing_features)} missing features with 5-day mean: {missing_features}")
+else:
+    print("All features available")
+
+# Debug: features yang digunakan
+# print(f"\nFeatures for prediction:")
+# for col in feature_cols:
+#     val = df_tomorrow[col].iloc[0]
+#     print(f"  {col:20s}: {val:.6f}")
 
 try:
     features_tomorrow = df_tomorrow[feature_cols].values
@@ -164,14 +182,14 @@ try:
     min_pred = today_close * (1 - max_change)
     pred_close_tomorrow = np.clip(pred_close_raw, min_pred, max_pred)
     
-    if pred_close_raw != pred_close_tomorrow:
+    if abs (pred_close_raw - pred_close_tomorrow) > 0.01:
         print(f"Note: Prediction capped from {pred_close_raw:.2f} to {pred_close_tomorrow:.2f} (±5% safety limit)")
     pred_pct_tomorrow = ((pred_close_tomorrow - today_close) / today_close) * 100
+    pred_change_point = pred_close_tomorrow - today_close
     
-    print(f"\nTomorrow's Prediction:")
-    print(f"  Date: {tomorrow_date.date()}")
+    print(f"\nTomorrow's Prediction - {tomorrow_date.date()}:")
     print(f"  Predicted Close: {pred_close_tomorrow:.2f}")
-    print(f"  Change: {pred_pct_tomorrow:+.2f}% ({pred_close_tomorrow - today_close:+.2f} points)")
+    print(f"  Change: {pred_pct_tomorrow:+.2f}% ({pred_change_point} points)")
     
     if abs(pred_pct_tomorrow) < 0.5:
         print(f"  Volatility: Low (< 0.5%)")
