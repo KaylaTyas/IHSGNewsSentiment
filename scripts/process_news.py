@@ -37,6 +37,23 @@ except:
 factory = StemmerFactory()
 stemmer = factory.create_stemmer()
 
+# Keyword buat filter judul n isi berita
+saham_keywords = [
+    "saham", "ihsg", "bursa", "bei", "emiten", "investor", "investasi", "pasar modal",
+    "ipo", "dividen", "rupiah", "kurs", "obligasi", "indeks", "ekonomi", "perdagangan",
+    "market", "harga", "komoditas", "delisting", "suspensi perdagangan", "listing",
+    "volatility", "kapitalisasi", "suku bunga", "inflasi", "perekonomian",
+    "defisit", "surplus"
+]
+
+stock_pattern = re.compile(r'\b(?:' + '|'.join(saham_keywords) + r')\b', flags=re.IGNORECASE)
+
+def is_stock_relevant(judul, konten):
+    judul_str = str(judul) if judul else ""
+    konten_str = str(konten) if konten else ""
+    
+    return bool(stock_pattern.search(judul_str)) or bool(stock_pattern.search(konten_str))
+
 def case_folding(text):
     return text.lower()
 
@@ -196,7 +213,9 @@ def insert_batch(conn, rows):
 
 # main
 def main_loop():
+    total_checked = 0
     total_processed = 0
+    total_skipped = 0
     retry_count = 0
     start_time = time.time()
     print(f"Starting batch processing (batch_size={BATCH_SIZE}, use_hf={USE_HF})")
@@ -226,7 +245,18 @@ def main_loop():
                 
                 for idx, row in df.iterrows():
                     raw_id = int(row["id"])
-                    text_field = row.get("konten") if pd.notna(row.get("konten")) else row.get("judul", "")
+                    judul = row.get("judul", "")
+                    konten = row.get("konten", "")
+                    
+                    total_checked += 1
+                    
+                    # Check if stock-relevant - SKIP if not relevant!
+                    if not is_stock_relevant(judul, konten):
+                        total_skipped += 1
+                        continue
+                    
+                    # Only process stock-relevant news
+                    text_field = konten if pd.notna(konten) else judul
                     cleaned_text, tokens = clean_text(text_field)
                     sentiment_label, sentiment_score = predict_sentiment(cleaned_text)
                     
@@ -238,8 +268,11 @@ def main_loop():
                         "sentiment_score": sentiment_score
                     })
 
-                insert_batch(conn, rows_to_insert)
-                total_processed += len(rows_to_insert)
+                # Only insert if there are stock-relevant rows
+                if rows_to_insert:
+                    insert_batch(conn, rows_to_insert)
+                    total_processed += len(rows_to_insert)
+                
                 retry_count = 0
                 
                 elapsed = time.time() - start_time
@@ -250,9 +283,11 @@ def main_loop():
                     try:
                         stats = get_progress_stats(conn)
                         pct = stats['total_processed']/max(stats['total_raw'], 1)*100
-                        print(f"Batch {batch_num}: {stats['total_processed']:,}/{stats['total_raw']:,} ({pct:.1f}%) | {rate:.1f} rows/sec")
+                        relevance_rate = total_processed/total_checked*100 if total_checked > 0 else 0
+                        print(f"Batch {batch_num}: Checked {total_checked:,} | Saved {total_processed:,} ({relevance_rate:.1f}% relevant) | Skipped {total_skipped:,} | {rate:.1f} rows/sec")
                     except:
-                        print(f"Batch {batch_num}: {total_processed:,} rows processed | {rate:.1f} rows/sec")
+                        relevance_rate = total_processed/total_checked*100 if total_checked > 0 else 0
+                        print(f"Batch {batch_num}: Checked {total_checked:,} | Saved {total_processed:,} ({relevance_rate:.1f}% relevant) | Skipped {total_skipped:,} | {rate:.1f} rows/sec")
                 sleep(0.5)
                 
         except OperationalError as e:
@@ -270,7 +305,8 @@ def main_loop():
             raise
             
         except KeyboardInterrupt:
-            print(f"\nInterrupted. Processed {total_processed} rows this session.")
+            relevance_rate = total_processed/total_checked*100 if total_checked > 0 else 0
+            print(f"\nInterrupted. Checked {total_checked:,} rows | Saved {total_processed:,} ({relevance_rate:.1f}% relevant) | Skipped {total_skipped:,}")
             break
             
         except Exception as e:
@@ -279,7 +315,10 @@ def main_loop():
     
     # Final summary
     elapsed = time.time() - start_time
-    print(f"\nDone. Processed {total_processed:,} rows in {elapsed/60:.1f} minutes ({total_processed/elapsed:.1f} rows/sec)")
+    relevance_rate = total_processed/total_checked*100 if total_checked > 0 else 0
+    print(f"\n✅ Done! Checked {total_checked:,} rows in {elapsed/60:.1f} minutes")
+    print(f"📊 Saved {total_processed:,} stock-relevant news ({relevance_rate:.1f}%)")
+    print(f"⏭️  Skipped {total_skipped:,} non-relevant news ({100-relevance_rate:.1f}%)")
 
 if __name__ == "__main__":
     try:
